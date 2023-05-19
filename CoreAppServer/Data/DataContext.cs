@@ -1,5 +1,8 @@
 using API.Entities;
+using API.Enums;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace API.Data
 {
@@ -17,11 +20,43 @@ namespace API.Data
         public DbSet<VatRate> VatRate { get; set; }
         public DbSet<PaymentInfo> PaymentInfo { get; set; }
         public DbSet<Browser> Browser { get; set; }
+        public DbSet<UserRole> UserRole { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // modelBuilder.Entity<Receipt>()
             //    .Navigation(e => e.AppUser).AutoInclude(); // for fun
+            modelBuilder.Entity<AppUser>()
+            .HasOne(a => a.UserInfo)
+            .WithOne(a => a.AppUser)
+            .HasForeignKey<UserInfo>(c => c.UserId);
+
+            modelBuilder.Entity<AppUser>()
+            .HasMany(a => a.UserRole)
+            .WithOne(a => a.AppUser)
+            .HasForeignKey(c => c.UserId);
+
+            using var hmac = new HMACSHA512();
+            modelBuilder.Entity<UserInfo>().HasData(new UserInfo
+            {
+                Id = 1,
+                Address = "",
+                City = "",
+                FirstName = "Admin",
+                LastName = "",
+                PostalCode = "",
+                UserId = 1,
+            });
+            modelBuilder.Entity<UserRole>().HasData(new UserRole { Id = 1, Role = Role.Admin, UserId = 1 });
+            modelBuilder.Entity<AppUser>().HasData(
+                new AppUser
+                {
+                    Id = 1,
+                    UserName = "Admin",
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("admin")),
+                    PasswordSalt = hmac.Key,
+                });
+
         }
     }
 }
