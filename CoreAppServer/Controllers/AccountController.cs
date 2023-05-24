@@ -4,6 +4,7 @@ using System.Text;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Enums;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,13 @@ namespace API.Controllers
                 UserName = registerDto.UserName.ToLower(),
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
                 PasswordSalt = hmac.Key,
+                UserRole = new List<UserRole>
+                {
+                    new()
+                    {
+                        Role = Role.Basic,
+                    }
+                }
             };
 
             _context.Users.Add(user);
@@ -52,7 +60,8 @@ namespace API.Controllers
             return Ok(new UserDto
             {
                 UserName = user.UserName,
-                Token = token.Token
+                Token = token.Token,
+                Role = user.UserRole.Select(role => role.Role.ToString()).ToList()
             });
         }
         
@@ -60,6 +69,8 @@ namespace API.Controllers
         public async Task<IActionResult> Login(LoginDto loginDto) 
         {
             var user = await _context.Users
+                .AsNoTracking()
+                .Include(x => x.UserRole)
                 .SingleOrDefaultAsync(user => user.UserName == loginDto.UserName);
             if (user == null) return NotFound(new HttpErrorDto
             {
@@ -84,6 +95,7 @@ namespace API.Controllers
             {
                 UserName = user.UserName,
                 Token = token.Token,
+                Role = user.UserRole.Select(role => role.Role.ToString()).ToList()
             });
         }
         

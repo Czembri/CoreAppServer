@@ -3,6 +3,7 @@ using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using API.Enums;
 
 namespace API.Controllers
 {
@@ -28,7 +29,7 @@ namespace API.Controllers
             if (int.TryParse(userId, out var id))
             {
                 var userRoles = await _authenticationService.UserRoles(this, id);
-                if (!userRoles.Any(role => role.Role == Enums.Role.Admin))
+                if (userRoles.All(role => role.Role != Role.Admin))
                     return Unauthorized();
                 return Ok(userRoles);
             } else
@@ -51,14 +52,12 @@ namespace API.Controllers
             if (int.TryParse(userId, out var id))
             {
                 var userRoles = await _authenticationService.UserRoles(this, id);
-                if (!userRoles.Any(x => x.Role.ToString() == role))
+                if (userRoles.All(x => x.Role.ToString() != role))
                     return Unauthorized(false);
                 return Ok(true);
             }
-            else
-            {
-                _logger.LogError($"Error while trying retrieve user roles: Invalid user id.");
-            }
+            
+            _logger.LogError($"Error while trying retrieve user roles: Invalid user id.");
 
             return Unauthorized(false);
         }
