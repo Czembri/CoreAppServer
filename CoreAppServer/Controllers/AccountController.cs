@@ -39,7 +39,9 @@ namespace API.Controllers
                     {
                         Role = Role.Basic,
                     }
-                }
+                },
+                ModificationDate = DateTime.UtcNow,
+                CreationDate = DateTime.UtcNow
             };
 
             _context.Users.Add(user);
@@ -51,7 +53,7 @@ namespace API.Controllers
                 LastName = registerDto.LastName,
                 Address = registerDto.Address,
                 PostalCode = registerDto.PostalCode,
-                City = registerDto.City,
+                City = registerDto.City
             };
 
             _context.UserInfo.Add(userInfo);
@@ -61,7 +63,7 @@ namespace API.Controllers
             {
                 UserName = user.UserName,
                 Token = token.Token,
-                Role = user.UserRole.Select(role => role.Role.ToString()).ToList()
+                Role = user.UserRole.Select(role => role.Role.ToString()).ToList(),
             });
         }
         
