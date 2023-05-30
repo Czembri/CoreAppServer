@@ -2,7 +2,6 @@ using System.Net;
 using API.Data;
 using API.DTOs;
 using API.Entities;
-using API.Errors;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -74,7 +73,7 @@ namespace API.Controllers
             return userRole.Select(role => new UserRoleDto
             {
                 Id = role.Id,
-                Role = role.Role
+                Role = role.Role.ToString()
             }).ToList();
         }
 
