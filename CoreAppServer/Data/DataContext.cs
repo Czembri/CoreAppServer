@@ -21,6 +21,8 @@ namespace API.Data
         public DbSet<PaymentInfo> PaymentInfo { get; set; }
         public DbSet<Browser> Browser { get; set; }
         public DbSet<UserRole> UserRole { get; set; }
+        public DbSet<Product> Product { get; set; }
+        public DbSet<ProductProperties> ProductProperties { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
