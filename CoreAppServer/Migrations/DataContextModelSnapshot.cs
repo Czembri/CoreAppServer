@@ -55,8 +55,8 @@ namespace API.Migrations
                             Id = 1,
                             CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             ModificationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            PasswordHash = new byte[] { 180, 186, 30, 86, 7, 178, 225, 85, 233, 206, 77, 246, 172, 198, 119, 204, 247, 173, 79, 46, 244, 37, 93, 154, 106, 138, 47, 69, 215, 62, 254, 17, 52, 28, 152, 159, 194, 18, 114, 170, 126, 61, 88, 189, 7, 125, 244, 30, 76, 84, 130, 15, 193, 30, 75, 2, 116, 0, 115, 126, 199, 181, 239, 196 },
-                            PasswordSalt = new byte[] { 41, 198, 23, 167, 99, 155, 206, 42, 247, 59, 147, 93, 168, 15, 201, 27, 173, 111, 89, 200, 197, 165, 96, 217, 109, 58, 41, 170, 77, 209, 134, 154, 206, 119, 186, 185, 62, 244, 117, 19, 100, 150, 217, 126, 7, 192, 233, 31, 43, 164, 32, 143, 69, 142, 166, 169, 149, 70, 76, 94, 13, 56, 4, 236, 232, 49, 109, 235, 140, 53, 170, 215, 37, 43, 252, 90, 226, 237, 197, 170, 211, 83, 211, 233, 10, 187, 185, 239, 65, 41, 4, 124, 162, 224, 185, 63, 184, 125, 58, 145, 159, 125, 124, 27, 155, 134, 252, 78, 133, 122, 205, 149, 59, 119, 210, 35, 244, 57, 78, 29, 137, 8, 61, 1, 203, 23, 255, 37 },
+                            PasswordHash = new byte[] { 141, 232, 96, 112, 120, 122, 129, 62, 217, 199, 196, 145, 32, 84, 179, 7, 176, 139, 11, 108, 219, 61, 34, 63, 223, 75, 130, 211, 95, 229, 185, 1, 141, 76, 142, 111, 230, 46, 39, 84, 152, 124, 182, 188, 96, 116, 181, 7, 144, 79, 129, 50, 63, 220, 149, 125, 120, 195, 1, 247, 24, 20, 179, 193 },
+                            PasswordSalt = new byte[] { 233, 39, 243, 188, 60, 211, 104, 184, 60, 30, 252, 136, 158, 200, 104, 124, 33, 207, 130, 162, 10, 234, 101, 122, 215, 105, 18, 46, 227, 20, 154, 248, 164, 48, 126, 158, 214, 235, 83, 123, 174, 225, 4, 12, 200, 203, 7, 169, 50, 166, 14, 181, 245, 127, 213, 154, 127, 94, 199, 236, 48, 1, 214, 139, 210, 161, 228, 123, 114, 234, 78, 11, 133, 77, 168, 89, 152, 199, 16, 130, 31, 103, 254, 184, 117, 154, 87, 7, 38, 62, 68, 55, 120, 103, 17, 222, 74, 68, 221, 179, 255, 97, 233, 210, 183, 221, 63, 82, 113, 187, 138, 30, 167, 92, 127, 173, 235, 36, 42, 233, 163, 76, 205, 235, 103, 85, 24, 189 },
                             UserName = "Admin"
                         });
                 });
@@ -146,26 +146,31 @@ namespace API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreationDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_DATE");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<byte[]>("Image")
                         .HasColumnType("bytea");
 
+                    b.Property<DateTime>("ModificationDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_DATE");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<int?>("ProductPropertiesId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductPropertiesId");
 
                     b.ToTable("Product");
                 });
 
-            modelBuilder.Entity("API.Entities.ProductProperties", b =>
+            modelBuilder.Entity("API.Entities.ProductProperty", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -173,28 +178,18 @@ namespace API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Color")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<string>("Depth")
-                        .HasColumnType("text");
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Height")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Purpose")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Shape")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SwitchType")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Width")
+                    b.Property<string>("Value")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductProperties");
                 });
@@ -379,13 +374,13 @@ namespace API.Migrations
                     b.Navigation("AppUser");
                 });
 
-            modelBuilder.Entity("API.Entities.Product", b =>
+            modelBuilder.Entity("API.Entities.ProductProperty", b =>
                 {
-                    b.HasOne("API.Entities.ProductProperties", "ProductProperties")
-                        .WithMany()
-                        .HasForeignKey("ProductPropertiesId");
+                    b.HasOne("API.Entities.Product", "Product")
+                        .WithMany("ProductProperty")
+                        .HasForeignKey("ProductId");
 
-                    b.Navigation("ProductProperties");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("API.Entities.Receipt", b =>
@@ -457,6 +452,11 @@ namespace API.Migrations
                     b.Navigation("UserInfo");
 
                     b.Navigation("UserRole");
+                });
+
+            modelBuilder.Entity("API.Entities.Product", b =>
+                {
+                    b.Navigation("ProductProperty");
                 });
 
             modelBuilder.Entity("API.Entities.Receipt", b =>

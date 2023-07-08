@@ -10,11 +10,15 @@ public class ProductsController: BaseApiController
 {
     private readonly DataContext _context;
     private readonly IProductService _productService;
+    private readonly IPropertiesService _propertiesService;
 
-    public ProductsController(DataContext context, IProductService productService)
+    public ProductsController(DataContext context,
+        IProductService productService,
+        IPropertiesService propertiesService)
     {
         _context = context;
         _productService = productService;
+        _propertiesService = propertiesService;
     }
 
     [HttpPatch("{id}/Description")]
@@ -41,7 +45,7 @@ public class ProductsController: BaseApiController
     public async Task<List<Product>> GetProducts()
     {
         var products = await _context.Product.AsNoTracking()
-            .Include(x => x.ProductProperties)
+            .Include(x => x.ProductProperty)
             .ToListAsync();
         return products;
     }
@@ -50,7 +54,7 @@ public class ProductsController: BaseApiController
     public async Task<Product> GetProduct(int id)
     {
         var product = await _context.Product.AsNoTracking()
-            .Include(x => x.ProductProperties)
+            .Include(x => x.ProductProperty)
             .FirstOrDefaultAsync(x => x.Id == id);
         return product;
     }
@@ -69,7 +73,7 @@ public class ProductsController: BaseApiController
     public async Task<bool> UpdateProduct(int id, [FromBody] Product product)
     {
         var dbObj = await _context.Product
-            .Include(x => x.ProductProperties)
+            .Include(x => x.ProductProperty)
             .FirstOrDefaultAsync(x => x.Id == id);
         dbObj.Description = product.Description;
         dbObj.Image = product.Image;
@@ -78,9 +82,22 @@ public class ProductsController: BaseApiController
         return true;
     }
 
+    [HttpPost("{id}/Property")]
+    public async Task<IActionResult> AddProductProperty(int id, [FromBody] ProductProperty productProperty)
+    {
+        var product = await GetAsync(id);
+        if (product == null)
+        {
+            return NotFound();
+        }
+        productProperty.Product = product;
+        var result = await _propertiesService.AddObjectProperty(_context, productProperty);
+        return Ok(result);
+    }
+
     private async Task<Product> GetAsync(int id)
     {
-        return await _context.Product.Include(x => x.ProductProperties)
+        return await _context.Product.Include(x => x.ProductProperty)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 }

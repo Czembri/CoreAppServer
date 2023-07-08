@@ -12,6 +12,7 @@ namespace API.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddSingleton<IProductService, ProductService>();
+            services.AddSingleton<IPropertiesService, PropertiesService>();
             services.AddDbContext<DataContext>(options => 
             {
                 options.UseNpgsql(config.GetConnectionString("Default"));

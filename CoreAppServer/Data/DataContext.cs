@@ -22,7 +22,7 @@ namespace API.Data
         public DbSet<Browser> Browser { get; set; }
         public DbSet<UserRole> UserRole { get; set; }
         public DbSet<Product> Product { get; set; }
-        public DbSet<ProductProperties> ProductProperties { get; set; }
+        public DbSet<ProductProperty> ProductProperties { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -58,6 +58,14 @@ namespace API.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("admin")),
                     PasswordSalt = hmac.Key,
                 });
+            
+            modelBuilder.Entity<Product>()
+                .Property(b => b.CreationDate)
+                .HasDefaultValueSql("CURRENT_DATE");
+           
+            modelBuilder.Entity<Product>()
+               .Property(b => b.ModificationDate)
+               .HasDefaultValueSql("CURRENT_DATE");
 
         }
     }

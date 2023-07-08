@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230518111330_FixAndRoles")]
-    partial class FixAndRoles
+    [Migration("20230708184818_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,6 +32,12 @@ namespace API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ModificationDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<byte[]>("PasswordHash")
                         .HasColumnType("bytea");
 
@@ -49,8 +55,10 @@ namespace API.Migrations
                         new
                         {
                             Id = 1,
-                            PasswordHash = new byte[] { 42, 146, 150, 81, 100, 198, 228, 146, 34, 126, 181, 210, 148, 250, 31, 22, 178, 76, 170, 2, 21, 93, 23, 34, 28, 168, 104, 62, 139, 161, 154, 213, 150, 131, 136, 122, 205, 45, 76, 100, 183, 120, 216, 82, 231, 82, 210, 223, 218, 34, 88, 46, 67, 19, 64, 227, 155, 234, 12, 134, 225, 1, 189, 139 },
-                            PasswordSalt = new byte[] { 212, 136, 55, 157, 234, 2, 10, 30, 201, 38, 19, 119, 200, 118, 250, 158, 149, 33, 92, 115, 57, 130, 138, 119, 239, 255, 111, 173, 55, 39, 202, 148, 155, 106, 225, 75, 160, 53, 17, 129, 228, 254, 241, 204, 119, 140, 221, 4, 87, 169, 18, 130, 224, 20, 38, 121, 253, 232, 236, 62, 248, 106, 90, 107, 220, 63, 31, 98, 240, 129, 31, 244, 255, 228, 195, 66, 128, 83, 111, 167, 66, 98, 62, 142, 108, 180, 73, 142, 37, 83, 4, 215, 192, 225, 35, 139, 119, 238, 144, 86, 12, 126, 254, 246, 209, 25, 157, 37, 236, 240, 191, 106, 49, 214, 50, 176, 59, 96, 129, 69, 19, 84, 163, 128, 230, 66, 2, 192 },
+                            CreationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            ModificationDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PasswordHash = new byte[] { 141, 232, 96, 112, 120, 122, 129, 62, 217, 199, 196, 145, 32, 84, 179, 7, 176, 139, 11, 108, 219, 61, 34, 63, 223, 75, 130, 211, 95, 229, 185, 1, 141, 76, 142, 111, 230, 46, 39, 84, 152, 124, 182, 188, 96, 116, 181, 7, 144, 79, 129, 50, 63, 220, 149, 125, 120, 195, 1, 247, 24, 20, 179, 193 },
+                            PasswordSalt = new byte[] { 233, 39, 243, 188, 60, 211, 104, 184, 60, 30, 252, 136, 158, 200, 104, 124, 33, 207, 130, 162, 10, 234, 101, 122, 215, 105, 18, 46, 227, 20, 154, 248, 164, 48, 126, 158, 214, 235, 83, 123, 174, 225, 4, 12, 200, 203, 7, 169, 50, 166, 14, 181, 245, 127, 213, 154, 127, 94, 199, 236, 48, 1, 214, 139, 210, 161, 228, 123, 114, 234, 78, 11, 133, 77, 168, 89, 152, 199, 16, 130, 31, 103, 254, 184, 117, 154, 87, 7, 38, 62, 68, 55, 120, 103, 17, 222, 74, 68, 221, 179, 255, 97, 233, 210, 183, 221, 63, 82, 113, 187, 138, 30, 167, 92, 127, 173, 235, 36, 42, 233, 163, 76, 205, 235, 103, 85, 24, 189 },
                             UserName = "Admin"
                         });
                 });
@@ -132,6 +140,62 @@ namespace API.Migrations
                     b.ToTable("PaymentInfo");
                 });
 
+            modelBuilder.Entity("API.Entities.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreationDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_DATE");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("bytea");
+
+                    b.Property<DateTime>("ModificationDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_DATE");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Product");
+                });
+
+            modelBuilder.Entity("API.Entities.ProductProperty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductProperties");
+                });
+
             modelBuilder.Entity("API.Entities.Receipt", b =>
                 {
                     b.Property<int>("Id")
@@ -186,6 +250,9 @@ namespace API.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
@@ -196,6 +263,8 @@ namespace API.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("ReceiptId");
 
@@ -307,6 +376,15 @@ namespace API.Migrations
                     b.Navigation("AppUser");
                 });
 
+            modelBuilder.Entity("API.Entities.ProductProperty", b =>
+                {
+                    b.HasOne("API.Entities.Product", "Product")
+                        .WithMany("ProductProperty")
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("API.Entities.Receipt", b =>
                 {
                     b.HasOne("API.Entities.AppUser", "AppUser")
@@ -330,6 +408,10 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.ReceiptPosition", b =>
                 {
+                    b.HasOne("API.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
                     b.HasOne("API.Entities.Receipt", "Receipt")
                         .WithMany("ReceiptPositions")
                         .HasForeignKey("ReceiptId");
@@ -337,6 +419,8 @@ namespace API.Migrations
                     b.HasOne("API.Entities.VatRate", "VatRate")
                         .WithMany()
                         .HasForeignKey("VatRateId");
+
+                    b.Navigation("Product");
 
                     b.Navigation("Receipt");
 
@@ -370,6 +454,11 @@ namespace API.Migrations
                     b.Navigation("UserInfo");
 
                     b.Navigation("UserRole");
+                });
+
+            modelBuilder.Entity("API.Entities.Product", b =>
+                {
+                    b.Navigation("ProductProperty");
                 });
 
             modelBuilder.Entity("API.Entities.Receipt", b =>

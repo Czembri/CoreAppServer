@@ -1,5 +1,4 @@
-﻿using System.Net.NetworkInformation;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using API.Entities;
@@ -20,7 +19,7 @@ public class ProductService : IProductService
     {
         _httpClient = new HttpClient();
         _productPropertyInfo = typeof(Product).GetProperties();
-        _productPropertiesPropertyInfo = typeof(ProductProperties).GetProperties();
+        _productPropertiesPropertyInfo = typeof(ProductProperty).GetProperties();
     }
     
     public async Task<string> GetProductDescription(Product product)
@@ -31,7 +30,7 @@ public class ProductService : IProductService
         
         foreach (var propertyInfo in _productPropertyInfo)
         {
-            if (propertyInfo.Name != nameof(Product.ProductProperties))
+            if (propertyInfo.Name != nameof(Product.ProductProperty))
             {
                 productObjectParameter.Add(new {
                     propertyInfo.Name,
