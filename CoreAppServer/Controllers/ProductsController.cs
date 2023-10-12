@@ -1,4 +1,5 @@
-﻿using API.Data;
+﻿using System.Buffers.Text;
+using API.Data;
 using API.Entities;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -62,13 +63,23 @@ public class ProductsController: BaseApiController
     [HttpGet("{id}/Image")]
     public async Task<IActionResult> GetProductImage(int id)
     {
+        var product = await _context.Product.AsNoTracking()
+            .Where(product => product.Id == id)
+            //.Select(product => product.Image)
+            .FirstOrDefaultAsync();
+        return File(product.Image, "image/jpg", $"image_{id}.jpg?cb={DateTime.Now}");
+    }
+
+    [HttpGet("{id}/Image2")]
+    public async Task<IActionResult> GetProductImage2(int id)
+    {
         var image = await _context.Product.AsNoTracking()
             .Where(product => product.Id == id)
             .Select(product => product.Image)
             .FirstOrDefaultAsync();
-        return File(image, "image/jpg");
+        return Ok(Convert.ToBase64String(image));
     }
-    
+
     [HttpPut("{id}")]
     public async Task<bool> UpdateProduct(int id, [FromBody] Product product)
     {

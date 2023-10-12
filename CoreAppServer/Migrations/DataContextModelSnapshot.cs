@@ -170,7 +170,7 @@ namespace API.Migrations
                     b.ToTable("Product");
                 });
 
-            modelBuilder.Entity("API.Entities.ProductProperty", b =>
+            modelBuilder.Entity("API.Entities.ProductProperties", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -374,10 +374,10 @@ namespace API.Migrations
                     b.Navigation("AppUser");
                 });
 
-            modelBuilder.Entity("API.Entities.ProductProperty", b =>
+            modelBuilder.Entity("API.Entities.ProductProperties", b =>
                 {
                     b.HasOne("API.Entities.Product", "Product")
-                        .WithMany("ProductProperty")
+                        .WithMany("ProductProperties")
                         .HasForeignKey("ProductId");
 
                     b.Navigation("Product");
@@ -456,7 +456,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Product", b =>
                 {
-                    b.Navigation("ProductProperty");
+                    b.Navigation("ProductProperties");
                 });
 
             modelBuilder.Entity("API.Entities.Receipt", b =>
