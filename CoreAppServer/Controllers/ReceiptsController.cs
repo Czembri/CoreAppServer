@@ -1,13 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using API.Company;
 using API.Data;
 using API.DTOs;
-using Microsoft.AspNetCore.Authorization;
 using static API.Mappers.ReceiptPositionsMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 
 namespace API.Controllers
 {

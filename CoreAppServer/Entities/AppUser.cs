@@ -4,6 +4,10 @@ namespace API.Entities
 {
     public class AppUser
     {
+        public AppUser()
+        {
+            UserIds = new HashSet<ConstitutionChat>();
+        }
         public int Id { get; set; }
         public string UserName { get; set; }
         public DateTime ModificationDate { get; set; }
@@ -11,6 +15,8 @@ namespace API.Entities
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public UserInfo UserInfo { get; set; }
+
         public ICollection<UserRole> UserRole{ get; set; }
+        public virtual ICollection<ConstitutionChat> UserIds { get; set; }
     }
 }

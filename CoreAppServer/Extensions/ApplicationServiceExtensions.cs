@@ -9,14 +9,16 @@ namespace API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config) 
         {
-            services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
-            services.AddSingleton<IProductService, ProductService>();
-            services.AddSingleton<IPropertiesService, PropertiesService>();
             services.AddDbContext<DataContext>(options => 
             {
                 options.UseNpgsql(config.GetConnectionString("Default"));
             });
+
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddSingleton<IProductService, ProductService>();
+            services.AddSingleton<IPropertiesService, PropertiesService>();
+            services.AddScoped<IConstitutionAIService, ConstitutionAIService>();
 
             return services;
         }

@@ -23,6 +23,7 @@ namespace API.Data
         public DbSet<UserRole> UserRole { get; set; }
         public DbSet<Product> Product { get; set; }
         public DbSet<ProductProperty> ProductProperties { get; set; }
+        public DbSet<ConstitutionChat> ConstitutionChat { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -7,7 +7,6 @@ namespace API.Entities
         public string Description { get; set; }
         public string Amount { get; set; }
         public int Quantity { get; set; }
-        
         public Product Product { get; set; }
         public VatRate VatRate { get; set; }
         public Receipt Receipt { get; set; }

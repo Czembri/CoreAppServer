@@ -2,9 +2,6 @@
 using API.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.VisualBasic;
-
 namespace API.Services
 {
     public interface IAuthenticationService
