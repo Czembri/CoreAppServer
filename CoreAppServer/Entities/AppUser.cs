@@ -7,6 +7,7 @@ namespace API.Entities
         public AppUser()
         {
             UserIds = new HashSet<ConstitutionChat>();
+            LawChatUserIds = new HashSet<LawChat>();
         }
         public int Id { get; set; }
         public string UserName { get; set; }
@@ -18,5 +19,6 @@ namespace API.Entities
 
         public ICollection<UserRole> UserRole{ get; set; }
         public virtual ICollection<ConstitutionChat> UserIds { get; set; }
+        public virtual ICollection<LawChat> LawChatUserIds { get; set; }
     }
 }

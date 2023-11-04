@@ -19,6 +19,7 @@ namespace API.Extensions
             services.AddSingleton<IProductService, ProductService>();
             services.AddSingleton<IPropertiesService, PropertiesService>();
             services.AddScoped<IConstitutionAIService, ConstitutionAIService>();
+            services.AddScoped<ILawAIService, LawAIService>();
 
             return services;
         }
