@@ -1,12 +1,15 @@
 ﻿using API.Data;
 using API.DTOs;
 using API.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace API.Services
 {
     public interface ILawAIService
     {
         Task<bool> SaveChat(int userId);
+        Task<List<AIChatsDto>> GetChats(int userId);
     }
     public class LawAIService : ILawAIService
     {
@@ -17,13 +20,42 @@ namespace API.Services
         {
             _context = context;
         }
+
+        public async Task<List<AIChatsDto>> GetChats(int userId)
+        {
+            var chats = await _context.LawChat
+                .AsNoTracking()
+                .Where(x => x.UserId == userId)
+                .Select(x => x.Messages)
+                .ToListAsync();
+
+            var dtoOfDtos = new List<AIChatsDto>();
+
+            foreach (var chat in chats)
+            {
+                 dtoOfDtos.Add(JsonSerializer.Deserialize<AIChatsDto>(chat));
+            }
+
+            var outcome = new List<AIChatsDto>();
+
+            dtoOfDtos.ForEach(res =>
+            {
+                res?.Response?.ForEach(message =>
+                {
+                    if (!string.IsNullOrEmpty(message?.Content))
+                    {
+                        outcome.Add(res);
+                    }
+                });
+            });
+
+            return outcome;
+        }
         public async Task<bool> SaveChat(int userId)
         {
             try
             {
-                var messagesString = await GetAllMessagesFromCurrentContext();
-                if (string.IsNullOrEmpty(messagesString))
-                    return false;
+                 var messagesString = await GetAllMessagesFromCurrentContext();
 
                 var map = new LawChat
                 {
@@ -48,7 +80,7 @@ namespace API.Services
 
             if (response.IsSuccessStatusCode)
             {
-                return response.Content.ReadAsStringAsync().Result;
+                return await response.Content.ReadAsStringAsync();
             }
             else
             {

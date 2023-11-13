@@ -13,6 +13,15 @@ namespace API.Controllers
         {
             _lawAIService = lawAIService;
         }
+        [HttpGet("get-chats")]
+        public async Task<List<AIChatsDto>> GetChats()
+        {
+            var userId = User.FindFirst(JwtRegisteredClaimNames.NameId)?.Value;
+            if (userId == null) return null;
+
+            return await _lawAIService.GetChats(int.Parse(userId));
+
+        }
 
         [HttpPost("save-chat")]
         public async Task<IActionResult> SaveChat()
