@@ -20,6 +20,7 @@ namespace API.Extensions
             services.AddSingleton<IPropertiesService, PropertiesService>();
             services.AddScoped<IConstitutionAIService, ConstitutionAIService>();
             services.AddScoped<ILawAIService, LawAIService>();
+            services.AddScoped<IDocumentGeneratorService, DocumentGeneratorService>();
 
             return services;
         }

@@ -1,5 +1,4 @@
 ﻿using API.DTOs;
-using API.Entities;
 using API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
