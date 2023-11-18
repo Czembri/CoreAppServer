@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpPost("{type}")]
-        public IActionResult GenerateDocument(string type, [FromBody] DocumentInfoDto dto)
+        public async Task<IActionResult> GenerateDocument(string type, [FromBody] DocumentInfoDto dto)
         {
             var query = DocumentContentBuilder.BuildDocumentContent(dto);
 
