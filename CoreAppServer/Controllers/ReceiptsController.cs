@@ -4,6 +4,7 @@ using API.DTOs;
 using static API.Mappers.ReceiptPositionsMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -17,7 +18,7 @@ namespace API.Controllers
             _context = context;
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IList<ReceiptDto>>> GetReceipts()
         {

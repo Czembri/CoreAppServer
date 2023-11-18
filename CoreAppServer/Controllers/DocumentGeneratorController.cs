@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using API.Utils.DocumentGenerator;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -18,6 +19,7 @@ namespace API.Controllers
 
         }
 
+        [Authorize]
         [HttpPost("{type}")]
         public async Task<IActionResult> GenerateDocument(string type, [FromBody] DocumentInfoDto dto)
         {

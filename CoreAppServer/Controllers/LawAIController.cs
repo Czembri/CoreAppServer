@@ -1,5 +1,6 @@
 ﻿using API.DTOs;
 using API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -12,6 +13,8 @@ namespace API.Controllers
         {
             _lawAIService = lawAIService;
         }
+
+        [Authorize]
         [HttpGet("get-chats")]
         public async Task<List<AIChatsDto>> GetChats()
         {
@@ -22,6 +25,7 @@ namespace API.Controllers
 
         }
 
+        [Authorize]
         [HttpPost("save-chat")]
         public async Task<IActionResult> SaveChat()
         {
