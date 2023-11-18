@@ -11,7 +11,8 @@
         public string Type { get; set; }
         public string Recipient { get; set; }
         public string RecipientAddress { get; set; }
-        public string SenderAddress { get; set; }
+        public string RecipientPhone { get; set; }
+        public string SenderPhone { get; set; }
         public string Sender { get; set; }
         public string City { get; set; }
     }

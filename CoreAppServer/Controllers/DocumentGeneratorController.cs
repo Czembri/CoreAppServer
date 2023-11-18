@@ -1,13 +1,10 @@
 ﻿using API.DTOs;
 using API.Interfaces;
-using iTextSharp.text.pdf;
-using iTextSharp.text;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System;
+using API.Utils.DocumentGenerator;
 
 namespace API.Controllers
 {
@@ -21,45 +18,15 @@ namespace API.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> GenerateDocument([FromBody] DocumentInfoDto dto)
+        [HttpPost("{type}")]
+        public IActionResult GenerateDocument(string type, [FromBody] DocumentInfoDto dto)
         {
-            var sb = new StringBuilder();
-
-            var date = dto.Date.HasValue ? dto.Date.Value.Date : DateTime.UtcNow.Date;
-
-            sb.Append($@"
-            Typ dokumentu: {dto.Type}\n
-            Tytuł dokumentu: {dto.Title}\n
-            Zawartość dokumentu: {dto.Content}\n
-            Miejsce gdzie został sporządzony dokument: {dto.City}\n
-            Data sporządzenia dokumentu: {date}\n");
-
-            if (!string.IsNullOrEmpty(dto.Recipient))
-                sb.Append($"Adresat: {dto.Recipient}\n");
-
-            if (!string.IsNullOrEmpty(dto.RecipientAddress))
-                sb.Append($"Adres adresata: {dto.RecipientAddress}\n");
-
-            if (!string.IsNullOrEmpty(dto.Sender))
-                sb.Append($"Nadawca: {dto.Sender}\n");
-
-            if (!string.IsNullOrEmpty(dto.SenderAddress))
-                sb.Append($"Adres nadawcy: {dto.SenderAddress}\n");
-
-            if (!string.IsNullOrEmpty(dto.Header))
-                sb.Append($"Nagłówek: {dto.Header}\n");
-
-            if (!string.IsNullOrEmpty(dto.Footer))
-                sb.Append($"Stopka: {dto.Footer}\n");
-
-            if (dto.Scale.HasValue)
-                sb.Append($"Skala: {dto.Scale}\n");
+            var query = DocumentContentBuilder.BuildDocumentContent(dto);
 
             using HttpClient client = new();
             HttpContent httpContent = new StringContent(JsonSerializer.Serialize(new
             {
-                query = sb.ToString()
+                query
             }), Encoding.UTF8, ContentType);
 
             // commented for DEV purposes
@@ -78,15 +45,12 @@ namespace API.Controllers
             var document = JsonSerializer.Deserialize<RootObject>(stringResponse);
             string textContent = document.Response.Content;
 
-            using MemoryStream memoryStream = new();
-            Document pdfDoc = new(PageSize.A4);
-            PdfWriter writer = PdfWriter.GetInstance(pdfDoc, memoryStream);
-            pdfDoc.Open();
-            pdfDoc.Add(new Paragraph(textContent));
-            pdfDoc.Close();
-
-            byte[] bytes = memoryStream.ToArray();
-            return File(bytes, "application/pdf; charset=utf-8", "filename.pdf");
+            return type switch
+            {
+                "pdf" => _documentGeneratorService.CreatePdf(this, textContent),
+                "docx" => _documentGeneratorService.CreateDocx(this, textContent),
+                _ => BadRequest("Invalid document type"),
+            };
         }
     }
 }
