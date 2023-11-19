@@ -1,7 +1,10 @@
 ﻿using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Utils.Constants;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Net.Http;
 using System.Text.Json;
 
 namespace API.Services
@@ -75,17 +78,13 @@ namespace API.Services
         }
         private static async Task<string> GetAllMessagesFromCurrentContext()
         {
-            using HttpClient client = new();
-            HttpResponseMessage response = await client.GetAsync(_lawAPIUrl + "/get-messages");
+            using var client = new HttpClient();
+            var request = new HttpRequestMessage(HttpMethod.Get, _lawAPIUrl + "/get-messages");
+            request.Headers.Add("X-App-Key", Headers.SecretHeader);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadAsStringAsync();
-            }
-            else
-            {
-                return null;
-            }
+            using var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
 
     }

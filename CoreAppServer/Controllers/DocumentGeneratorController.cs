@@ -33,6 +33,7 @@ namespace API.Controllers
 
             // commented for DEV purposes
             // TODO : uncomment for PROD
+            //httpContent.Headers.Add("X-App-Key", Headers.SecretHeader);
             //HttpResponseMessage response = await client.PostAsync("http://localhost:8001/api/v1/document-generator", httpContent);
             //var stringResponse = await response.Content.ReadAsStringAsync();
 
