@@ -3,9 +3,7 @@ using API.DTOs;
 using API.Entities;
 using API.Utils.Constants;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Net.Http;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace API.Services
 {
@@ -13,6 +11,7 @@ namespace API.Services
     {
         Task<bool> SaveChat(int userId);
         Task<List<AIChatsDto>> GetChats(int userId);
+        Task<AIChatsDto> GetChat(int chatId);
     }
     public class LawAIService : ILawAIService
     {
@@ -29,30 +28,37 @@ namespace API.Services
             var chats = await _context.LawChat
                 .AsNoTracking()
                 .Where(x => x.UserId == userId)
-                .Select(x => x.Messages)
-                .ToListAsync();
+                .Select(x => new { x.Id, x.Messages })
+                .ToDictionaryAsync(x => x.Id);
 
             var dtoOfDtos = new List<AIChatsDto>();
 
             foreach (var chat in chats)
             {
-                 dtoOfDtos.Add(JsonSerializer.Deserialize<AIChatsDto>(chat));
+                var deserialized = JsonConvert.DeserializeObject<AIChatsDto>(chat.Value.Messages);
+                deserialized.Id = chat.Key;
+                 dtoOfDtos.Add(deserialized);
             }
 
-            var outcome = new List<AIChatsDto>();
+            return dtoOfDtos;
+        }
 
-            dtoOfDtos.ForEach(res =>
-            {
-                res?.Response?.ForEach(message =>
-                {
-                    if (!string.IsNullOrEmpty(message?.Content))
-                    {
-                        outcome.Add(res);
-                    }
-                });
-            });
+        public async Task<AIChatsDto> GetChat(int chatId)
+        {
+            var chat = await _context.LawChat
+                .AsNoTracking()
+                .Where(x => x.Id == chatId)
+                .FirstOrDefaultAsync();
 
-            return outcome;
+            if (chat == null) return null;
+
+            var deserializedChat = JsonConvert.DeserializeObject<AIChatsDto>(chat.Messages);
+
+            if (deserializedChat == null) return null;
+
+            deserializedChat.Id = chat.Id;
+
+            return deserializedChat;
         }
         public async Task<bool> SaveChat(int userId)
         {

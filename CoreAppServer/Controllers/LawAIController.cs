@@ -16,12 +16,28 @@ namespace API.Controllers
 
         [Authorize]
         [HttpGet("get-chats")]
-        public async Task<List<AIChatsDto>> GetChats()
+        public async Task<IActionResult> GetChats()
         {
             var userId = User.FindFirst(JwtRegisteredClaimNames.NameId)?.Value;
-            if (userId == null) return null;
+            if (userId == null) return Unauthorized();
 
-            return await _lawAIService.GetChats(int.Parse(userId));
+            var chats = await _lawAIService.GetChats(int.Parse(userId));
+
+            return Ok(chats);
+
+        }
+
+
+        [Authorize]
+        [HttpGet("get-chat/{chatId}")]
+        public async Task<IActionResult> GetChat(int chatId)
+        {
+            var userId = User.FindFirst(JwtRegisteredClaimNames.NameId)?.Value;
+            if (userId == null) return Unauthorized();
+
+            var chat = await _lawAIService.GetChat(chatId);
+
+            return Ok(chat);
 
         }
 

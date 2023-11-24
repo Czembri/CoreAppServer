@@ -11,10 +11,10 @@ namespace API.Utils.Constants
         {
             try
             {
-                string json = File.ReadAllText("../Config/Headers.json"); // may not work
-                HeadersConfigurationDto config = JsonConvert.DeserializeObject<HeadersConfigurationDto>(json);
+                //string json = File.ReadAllText("../Config/Headers.json"); // may not work
+                //HeadersConfigurationDto config = JsonConvert.DeserializeObject<HeadersConfigurationDto>(json);
 
-                SecretHeader = config.SecretHeader;
+                SecretHeader = "secret";
             }
             catch (IOException)
             {
