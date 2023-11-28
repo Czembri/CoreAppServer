@@ -2,6 +2,7 @@ using System.Net;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,11 @@ namespace API.Controllers
     public class UsersController : BaseApiController
     {
         private readonly DataContext _context;
-        public UsersController(DataContext context)
+        private readonly IUsersService _usersService;
+        public UsersController(DataContext context, IUsersService usersService)
         {
             _context = context;
+            _usersService = usersService;
         }
         
         [Authorize]
@@ -66,6 +69,23 @@ namespace API.Controllers
                 })
                 .FirstOrDefaultAsync();
             return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPut]
+        public async Task<ActionResult> UpdateUser([FromBody] AdminFormDto form)
+        {
+            var result = await _usersService.UpdateUserAsync(form);
+            if (!result)
+                return NotFound(new HttpErrorDto
+                {
+                    HttpStatusCode = HttpStatusCode.NotFound,
+                    Error = "User not found"
+                });
+            return Ok(new
+            {
+                message = "User updated successfully"
+            });
         }
 
         private static List<UserRoleDto> MapUserRole(IEnumerable<UserRole> userRole)

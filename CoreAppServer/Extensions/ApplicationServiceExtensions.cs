@@ -21,6 +21,7 @@ namespace API.Extensions
             services.AddScoped<IConstitutionAIService, ConstitutionAIService>();
             services.AddScoped<ILawAIService, LawAIService>();
             services.AddScoped<IDocumentGeneratorService, DocumentGeneratorService>();
+            services.AddScoped<IUsersService, UsersService>();
 
             return services;
         }

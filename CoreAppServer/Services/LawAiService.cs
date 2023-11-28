@@ -32,15 +32,22 @@ namespace API.Services
                 .ToDictionaryAsync(x => x.Id);
 
             var dtoOfDtos = new List<AIChatsDto>();
+            var output = new List<AIChatsDto>();
 
             foreach (var chat in chats)
             {
                 var deserialized = JsonConvert.DeserializeObject<AIChatsDto>(chat.Value.Messages);
                 deserialized.Id = chat.Key;
-                 dtoOfDtos.Add(deserialized);
+                dtoOfDtos.Add(deserialized);
             }
 
-            return dtoOfDtos;
+            foreach (var dto in dtoOfDtos)
+            {
+                if (dto.Response.Count > 1)
+                    output.Add(dto);
+            }
+
+            return output;
         }
 
         public async Task<AIChatsDto> GetChat(int chatId)
