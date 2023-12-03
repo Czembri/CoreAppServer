@@ -2,6 +2,7 @@ using System.Net;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Exceptions;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -86,6 +87,45 @@ namespace API.Controllers
             {
                 message = "User updated successfully"
             });
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult> AddUser([FromBody] AdminFormDto form)
+        {
+            try
+            {
+                var result = await _usersService.AddUser(form);
+
+                return Ok(new
+                {
+                    message = "User updated successfully"
+                });
+            }
+            catch (UserAlreadyExistsException)
+            {
+                return BadRequest(new HttpErrorDto
+                {
+                    HttpStatusCode = HttpStatusCode.BadRequest,
+                    Error = "User already exists"
+                });
+            }
+            catch (NoRoleAddedToUserException)
+            {
+                return BadRequest(new HttpErrorDto
+                {
+                    HttpStatusCode = HttpStatusCode.BadRequest,
+                    Error = "No role added to user"
+                });
+            }
+            catch (RoleNotExistsException)
+            {
+                return BadRequest(new HttpErrorDto
+                {
+                    HttpStatusCode = HttpStatusCode.BadRequest,
+                    Error = "Role not exist"
+                });
+            }
         }
 
         private static List<UserRoleDto> MapUserRole(IEnumerable<UserRole> userRole)

@@ -15,18 +15,18 @@ namespace API.Controllers
     {
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
-        private const string ContentType = "application/json";
-        public AccountController(DataContext context, ITokenService tokenService)
+        private readonly IUsersService _usersService;
+        public AccountController(DataContext context, ITokenService tokenService, IUsersService usersService)
         {
             _tokenService = tokenService;
             _context = context;
-            
+            _usersService = usersService;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto registerDto) 
         {
-            if (await UserExists(registerDto.UserName)) return BadRequest("Username already exists!");
+            if (await _usersService.UserExists(registerDto.UserName)) return BadRequest("Username already exists!");
 
             using var hmac = new HMACSHA512();
             var user = new AppUser
@@ -100,11 +100,6 @@ namespace API.Controllers
                 Token = token.Token,
                 Role = user.UserRole.Select(role => role.Role.ToString()).ToList()
             });
-        }
-        
-        private async Task<bool> UserExists(string username) 
-        {
-            return await _context.Users.AnyAsync(user => user.UserName == username.ToLower());
         }
     }
 }

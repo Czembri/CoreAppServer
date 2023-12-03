@@ -2,7 +2,7 @@
 {
     public class AdminFormDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Login { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime ModificationDate { get; set; }

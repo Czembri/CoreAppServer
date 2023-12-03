@@ -42,15 +42,15 @@ namespace API.Controllers
         }
 
         [Authorize]
-        [HttpPost("save-chat")]
-        public async Task<IActionResult> SaveChat()
+        [HttpPost("save-chat/{id}")]
+        public async Task<IActionResult> SaveChat(int? id)
         {
             try
             {
                 var userId = User.FindFirst(JwtRegisteredClaimNames.NameId)?.Value;
                 if (userId == null)
                     return NotFound("User not found");
-                await _lawAIService.SaveChat(int.Parse(userId));
+                await _lawAIService.SaveChat(int.Parse(userId), id);
                 return Ok(new
                 {
                     Response = "Chat saved successfully"

@@ -9,7 +9,7 @@ namespace API.Services
 {
     public interface ILawAIService
     {
-        Task<bool> SaveChat(int userId);
+        Task<bool> SaveChat(int userId, int? id);
         Task<List<AIChatsDto>> GetChats(int userId);
         Task<AIChatsDto> GetChat(int chatId);
     }
@@ -67,19 +67,30 @@ namespace API.Services
 
             return deserializedChat;
         }
-        public async Task<bool> SaveChat(int userId)
+        public async Task<bool> SaveChat(int userId, int? id)
         {
             try
             {
-                 var messagesString = await GetAllMessagesFromCurrentContext();
 
-                var map = new LawChat
+                var messagesString = await GetAllMessagesFromCurrentContext();
+                if (id.HasValue)
                 {
-                    Messages = messagesString,
-                    UserId = userId
-                };
+                    var chat = await _context.LawChat
+                        .Where(x => x.Id == id)
+                        .FirstOrDefaultAsync();
+                    chat.Messages = messagesString;
+                } 
+                else
+                {
 
-                _context.LawChat.Add(map);
+                    var map = new LawChat
+                    {
+                        Messages = messagesString,
+                        UserId = userId
+                    };
+
+                    _context.LawChat.Add(map);
+                }
                 await _context.SaveChangesAsync();
                 return true;
             }
