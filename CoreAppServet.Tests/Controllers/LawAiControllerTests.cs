@@ -44,16 +44,16 @@ namespace CoreAppServer.Tests.Controllers
                 {
                     Response = new List<MessageDto>
                     {
-                        new MessageDto { Role = "user", Content = "Hello, how can I help you today?" },
-                        new MessageDto { Role = "assistant", Content = "I am looking for legal advice regarding a contract." }
+                        new MessageDto { Role = "user", ContentText = "Hello, how can I help you today?" },
+                        new MessageDto { Role = "assistant", ContentText = "I am looking for legal advice regarding a contract." }
                     }
                 },
                 new AIChatsDto
                 {
                     Response = new List<MessageDto>
                     {
-                        new MessageDto { Role = "user", Content = "What are the key points to consider in a lease agreement?" },
-                        new MessageDto { Role = "assistant", Content = "Key points include lease duration, payment terms, and termination clauses." }
+                        new MessageDto { Role = "user", ContentText = "What are the key points to consider in a lease agreement?" },
+                        new MessageDto { Role = "assistant", ContentText = "Key points include lease duration, payment terms, and termination clauses." }
                     }
                 }
             };
@@ -63,18 +63,20 @@ namespace CoreAppServer.Tests.Controllers
                              .ReturnsAsync(expectedChats);
 
             var result = await _controller.GetChats();
+            var okObjectResult = result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
 
-            Assert.NotNull(result);
-            Assert.Equal(expectedChats, result);
+            var actualChats = okObjectResult.Value as List<AIChatsDto>;
+            Assert.Equal(expectedChats, actualChats);
         }
 
         [Fact]
         public async Task SaveChat_ReturnsOk_WhenChatIsSaved()
         {
-            _mockLawAIService.Setup(service => service.SaveChat(It.IsAny<int>()))
+            _mockLawAIService.Setup(service => service.SaveChat(It.IsAny<int>(), null))
                              .ReturnsAsync(true);
 
-            var result = await _controller.SaveChat();
+            var result = await _controller.SaveChat(null);
 
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.NotNull(okResult.Value);
@@ -87,9 +89,9 @@ namespace CoreAppServer.Tests.Controllers
         [Fact]
         public async Task SaveChat_ReturnsBadRequest_WhenExceptionOccurs()
         {
-            _mockLawAIService.Setup(service => service.SaveChat(It.IsAny<int>()))
+            _mockLawAIService.Setup(service => service.SaveChat(It.IsAny<int>(), null))
                              .ThrowsAsync(new Exception());
-            var result = await _controller.SaveChat();
+            var result = await _controller.SaveChat(null);
             Assert.IsType<BadRequestResult>(result);
         }
     }

@@ -90,6 +90,23 @@ namespace API.Controllers
         }
 
         [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteUser(int id)
+        {
+            var result = await _usersService.DeleteUserAsync(id);
+            if (!result)
+                return NotFound(new HttpErrorDto
+                {
+                    HttpStatusCode = HttpStatusCode.NotFound,
+                    Error = "User not found"
+                });
+            return Ok(new
+            {
+                message = "User deleted successfully"
+            });
+        }
+
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult> AddUser([FromBody] AdminFormDto form)
         {

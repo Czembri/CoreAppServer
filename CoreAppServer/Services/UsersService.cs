@@ -4,7 +4,6 @@ using API.Entities;
 using API.Enums;
 using API.Exceptions;
 using API.Interfaces;
-using DocumentFormat.OpenXml.InkML;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
@@ -26,13 +25,6 @@ namespace API.Services
             if (contextRoles.Length == 0 || string.IsNullOrEmpty(adminFormDto.Roles)) throw new NoRoleAddedToUserException();
 
             if (Enum.TryParse(contextRoles[0], out Role role) == false) throw new RoleNotExistsException();
-
-            var roles = await _dataContext.UserRole
-                .AsNoTracking()
-                .Where(x => x.Role == role)
-                .ToListAsync();
-
-            if (roles.Count == 0) throw new NoRoleAddedToUserException();
 
             if (await UserExists(adminFormDto.Login)) throw new UserAlreadyExistsException();
 
@@ -95,6 +87,21 @@ namespace API.Services
             entity.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(adminFormDto.Password));
             entity.PasswordSalt = hmac.Key;
 
+            await _dataContext.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> DeleteUserAsync(int id)
+        {
+            var entity = await _dataContext.Users
+                .Include(x => x.UserInfo)
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
+
+            if (entity == null) return false;
+
+            _dataContext.Users.Remove(entity);
             await _dataContext.SaveChangesAsync();
 
             return true;

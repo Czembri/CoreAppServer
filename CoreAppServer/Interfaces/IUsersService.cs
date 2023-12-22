@@ -7,5 +7,6 @@ namespace API.Interfaces
         public Task<bool> UpdateUserAsync(AdminFormDto adminFormDto);
         public Task<bool> AddUser(AdminFormDto adminFormDto);
         public Task<bool> UserExists(string userName);
+        public Task<bool> DeleteUserAsync(int id);
     }
 }
