@@ -106,10 +106,27 @@ namespace API.Services
 
             return true;
         }
-         
+
+        public async Task<AppUser> GetUserByUserName(string username)
+        {
+            return await _dataContext.Users
+                .AsNoTracking()
+                .Include(x => x.UserInfo)
+                .Where(x => x.UserName == username)
+                .Select(user => new AppUser
+                {
+                    CreationDate = user.CreationDate,
+                    ModificationDate = user.ModificationDate,
+                    UserInfo = user.UserInfo,
+                    Id = user.Id,
+                    UserName = user.UserName
+                })
+                .FirstOrDefaultAsync();      
+        }
+
         public async Task<bool> UserExists(string userName)
         {
-            return await _dataContext.Users.AnyAsync(user => user.UserName == userName.ToLower());
+            return await _dataContext.Users.AnyAsync(user => user.UserName.ToLower() == userName.ToLower());
         }
     }
 }

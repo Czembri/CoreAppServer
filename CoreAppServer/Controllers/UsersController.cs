@@ -106,6 +106,15 @@ namespace API.Controllers
             });
         }
 
+
+        [Authorize]
+        [HttpGet("usr-nm")]
+        public async Task<ActionResult> GetUserByUserName([FromQuery] string user)
+        {
+            var result = await _usersService.GetUserByUserName(user);
+            return Ok(result);
+        }
+
         [Authorize]
         [HttpPost]
         public async Task<ActionResult> AddUser([FromBody] AdminFormDto form)
