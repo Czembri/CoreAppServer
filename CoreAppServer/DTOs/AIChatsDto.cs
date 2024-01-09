@@ -8,6 +8,8 @@ namespace API.DTOs
         public int Id { get; set; }
         [JsonProperty("response")]
         public List<MessageDto> Response { get; set; }
+        [JsonProperty("creationDate")]
+        public DateTime? CreationDate { get; set; }
 
     }
 }

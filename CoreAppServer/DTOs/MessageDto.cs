@@ -10,10 +10,4 @@ namespace API.DTOs
         [JsonProperty("role")]
         public string Role { get; set; }
     }
-
-    //public class LawAIResponse
-    //{
-    //    [JsonProperty("response")]
-    //    public List<MessageDto> Contents { get; set; }
-    //}
 }

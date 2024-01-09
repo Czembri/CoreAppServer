@@ -28,7 +28,7 @@ namespace API.Services
             var chats = await _context.LawChat
                 .AsNoTracking()
                 .Where(x => x.UserId == userId)
-                .Select(x => new { x.Id, x.Messages })
+                .Select(x => new { x.Id, x.Messages, x.CreationDate })
                 .ToDictionaryAsync(x => x.Id);
 
             var dtoOfDtos = new List<AIChatsDto>();
@@ -38,6 +38,7 @@ namespace API.Services
             {
                 var deserialized = JsonConvert.DeserializeObject<AIChatsDto>(chat.Value.Messages);
                 deserialized.Id = chat.Key;
+                deserialized.CreationDate = chat.Value.CreationDate;
                 dtoOfDtos.Add(deserialized);
             }
 

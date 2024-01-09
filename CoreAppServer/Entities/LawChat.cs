@@ -10,5 +10,6 @@ namespace API.Entities
         [ForeignKey("UserId")]
         [InverseProperty("LawChatUserIds")]
         public AppUser AppUser { get; set; }
+        public DateTime? CreationDate { get; set; }
     }
 }
