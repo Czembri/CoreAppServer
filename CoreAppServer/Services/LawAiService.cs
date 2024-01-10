@@ -87,7 +87,8 @@ namespace API.Services
                     var map = new LawChat
                     {
                         Messages = messagesString,
-                        UserId = userId
+                        UserId = userId,
+                        CreationDate = DateTime.Now
                     };
 
                     _context.LawChat.Add(map);
