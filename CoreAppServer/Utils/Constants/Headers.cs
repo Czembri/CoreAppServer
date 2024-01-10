@@ -16,8 +16,9 @@ namespace API.Utils.Constants
 
                 SecretHeader = "secret";
             }
-            catch (IOException)
+            catch (IOException ex)
             {
+                Console.WriteLine(ex.Message, "Headers.json file not found");
                 throw;
             }
         }

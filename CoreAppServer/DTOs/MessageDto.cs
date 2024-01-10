@@ -5,7 +5,7 @@ namespace API.DTOs
     public class MessageDto
     {
         [JsonProperty("content")]
-        public string ContentText { get; set; }
+        public string Content { get; set; }
 
         [JsonProperty("role")]
         public string Role { get; set; }
